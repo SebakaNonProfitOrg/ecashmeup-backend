@@ -1,0 +1,6 @@
+@eCashMeUp_HostAddress = http://localhost:5261
+
+GET {{eCashMeUp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
