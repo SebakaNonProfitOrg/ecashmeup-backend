@@ -77,15 +77,15 @@ builder.Services.AddScoped<JwtHelper>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "eCashMeUp API v1");
+});
+// if (!app.Environment.IsDevelopment())
+// {
+//     app.UseHttpsRedirection();
+// }
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
