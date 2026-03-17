@@ -91,4 +91,5 @@ app.UseAuthorization();
 app.MapControllers();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Urls.Add($"http://*:{port}");
+app.MapGet("/", () => Results.Ok("eCashMeUp API is running!"));
 app.Run();
