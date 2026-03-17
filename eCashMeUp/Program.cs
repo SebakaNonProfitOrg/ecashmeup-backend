@@ -43,13 +43,15 @@ builder.Services.AddSwaggerGen(c =>
         Array.Empty<string>()
     }});
 });
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
+                      ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
+             ?? builder.Configuration["Jwt:Key"]!;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -75,10 +77,18 @@ builder.Services.AddScoped<JwtHelper>();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://*:{port}");
 app.Run();
